@@ -1,0 +1,7 @@
+# Using .NETCore Tools to Create Reusable and Shareable Tools & Apps!
+
+The .NET Core SDK includes a powerful and yet underappreciated feature to build and publish 'SDK Tools'. Using the `dotnet tool` SDK command allows installing globally published Dotnet Tools from NuGet, which can be easily shared using standard NuGet packaging. If you've created and published a NuGet package before you already know how to share a Dotnet Tool. It's a wonderfully simple distribution mechanism for sharing .NET Core based Console applications with other users or even for making tools available in your own organization.
+
+With all the new capabilities of .NET Core there are lots of opportunities to build useful utilities large and small, as well as standalone server applications. Since .NET Core is multi-platform now, your tools can also work on Windows, Mac and Linux. But the key feature is the fact that you can **easily share** any tools you create as a small package, and make it available via NuGet's easy publishing process for everybody.
+
+In this session I show what you need to build DotNet Tools, how to get them published and then installed to consume on any machine that has the .NET Core SDK installed. I'll also show several personal examples of tools and standalone servers that I've built to give you an idea of the range of things you can build using Dotnet Tools.
