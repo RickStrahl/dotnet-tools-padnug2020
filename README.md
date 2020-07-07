@@ -13,6 +13,9 @@ This is a repository for session materials for this Dotnet Tools presentation.
 * [ToolGet Tool Package Search](https://www.toolget.net/)
 * [NuGet Package Explorer](https://github.com/NuGetPackageExplorer/NuGetPackageExplorer)
 
+### Tools
+
+* [NuGet Package Explorer]()
 
 ### Dotnet Tools discussed on GitHub
 
