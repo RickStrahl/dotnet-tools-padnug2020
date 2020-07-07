@@ -2,7 +2,6 @@
 
 This is a repository for session materials for this Dotnet Tools presentation.
 
-
 ### Presentation Materials
 
 * [White Paper](DotnetTools.md)

@@ -15,7 +15,7 @@ When you break down what a Dotnet Tool is to its bare bones, it comes down to th
 
 The idea of a Dotnet Tool is to make it easy to build, publish and consume executable tools in the same way you've been able create NuGet packages for .NET Core components in the past.
 
-And while the original idea was to build tools to aid as part of the build process, this platform really offers much more scope because essentially **you can publish and share any .NET Core executable application**. This includes servers that run full ASP.NET Core applications or services as well as .NET Core desktop applications.
+And while the original idea was to build tools to aid as part of the build and development process, this platform really offers much more scope because essentially **you can publish and share any .NET Core executable application**. This includes servers that run full ASP.NET Core applications or services as well as .NET Core desktop applications.
 
 ### Why use Dotnet Tools?
 The big selling points of Dotnet Tools are:
@@ -234,38 +234,166 @@ dotnet tool uninstall -g LiveReloadServer
 As you can see it's pretty easy to create, publish, consume and manage dotnet tools...
 
 ## Example Components
-In this section I'd like to briefly describe a few of the Dotnet Tools I've created and discuss the how's and more pertinently the why's. I've been huge fan of these tools because it is so frictionless to get a tool published. Some of these tools I built mainly for myself, but since I've made them public they ended up getting used by quite a few other people. Maybe you'll find some of these useful as well.
+In this section I'd like to briefly describe a few of the Dotnet Tools I've created and discuss the how's and more pertinently the why's. I've been huge fan of these tools because it is so frictionless to get a tool published. If it wasn't for the easy of sharing via NuGet I probably wouldn't have bothered sharing these tools at all.
+
+Some of these tools I built mainly for myself, but since I've made them public they ended up getting used by quite a few other people. Maybe you'll find some of these useful as well. But more importantly I hope it inspires you to share your own tools no matter how silly or simple - somebody might find them useful too!
 
 At this point if I need to build something that requires a Console application that isn't part of some other bigger product, I tend to default to package and ship it as a .NET tool.
 
 ### Simple Tools 
-The first couple of examples are your typical utility tools that under normal circumstances I would have distributed as a downloable installer or just a standalone binary. If a tool is popular enough I still go that route **in addition to the dotnet tool**, but for me personally I tend to use the .NET tool rather than a standalone installed application.
+The first couple of examples are your typical utility tools that under normal circumstances I would have distributed as a downloadable installer or just a standalone binary. If a tool is popular enough I still go that route **in addition to the dotnet tool**, but for me personally I tend to use the .NET tool rather than a standalone installed application.
+
+
+#### Visual Studio Snippet Converter
+This tool is a narrow use case utility tool that converts Visual Studio Code Snippets (code expansions) into:
+
+* Visual Studio Code Snippets
+* JetBrains Rider Snippets
+
+This is obviously very targeted and specifically targeted at developers who are already using Visual Studio and so are **very likely** to have the .NET SDK installed just by virtue of using Visual Studio. So as a tool this is perfect and it fits perfect into the **Dotnet Project Tooling** use case I pointed out as one of the original design goals by Microsoft.
+
+The background behind this tool is that I have a crap load of Visual Studio code snippets that help me quickly format blocks of code - from inserting properties, but creating entire blocks of classes that have complex signatures. Snippets are incredibly useful and unfortunately another very much underutilized feature in Visual Studio (and other tools).
+
+Now, I use a number of different tools - in addition to Visual Studio I use Rider for .NET development especially on other platforms and also Visual Studio Code especially for front end development. 
+
+So this tool lets me export my previous snippets into these other platforms and take advantage of them there as well. In addition - I've taken to using Visual Studio as my Master Snippet repository when I create or update snippets and then export them back out to the other tools which allows me to keep the snippets in sync.
+
+To use this tool:
+
+```ps
+dotnet tool install -g snippetconverter
+```
+
+For options just run it:
+
+![](images/SnippetConverterSyntax.png)
+
+Then to run the converter you can specify a source snippet or folder and an output path:
+
+
+```powershell
+snippetconverter "~\Visual C#\My Code Snippets" -o "~\ww-csharp.code-snippets" -r -d
+```
+
+To make the snippet location easier to use the tool lets you use `~` for the default snippet folders. For Visual Studio you can specify 
+
+![](images/SnippetConverterExportedSnippets.png)
 
 #### HtmlPackager
-I already showed the HtmlPackager in some of the screen shots above. This is a tool that I built some time ago to package up HTML content from a URL and package it into either a fully self-contained single HTML file with all dependency resources embedded as base64 or text content, as a folder of loose files or a zipped archive of those same loose files.
+HtmlPackager is another very use case specific tool that I built some time ago to package up HTML content from a URL and package it into either a fully self-contained 'package' bringing all the content offline. The 'package' output can be either a single very large HTML file internalizes all dependencies inline of the document, an HTML document with a folder full of dependencies, or a Zip file an HTML plus it's dependencies.
 
-It can be installed with:
+I needed this functionality at the time for my [Markdown Monster](https://markdownmonster.west-wind.com) editor, and was looking for a command line tool, but came up with nothing that worked and had a small footprint. As a result I ended up building my own .NET library that I used in Markdown Monster, but I also decided to provide it as a Dotnet Tool so it can be used in script files.
+
+This tool is not directly related to Dotnet projects or the development process, but rather it's more of a general purpose tool and `dotnet tool` functionality just provides a very easy way to publish this tool.
+
+The `dotnet-htmlpackager` tool can be installed with:
 
 ```ps
 dotnet tool install -g dotnet-htmlpackager
 ```
 
-Once installed you can run using the `help` command to see command line options 
+Once installed you can run using the `help` command to see command line options:
 
-I originally built this functionality for my [Markdown Monster](https://markdownmonster.west-wind.com) editor
-
-
-
-### A Generic Web Server
-
-### A Legacy Web and Application Server 
+![](dotnet-htmlpackagerHelp.png)
 
 
+Then to run it you can do something like this:
+
+```ps
+htmlpackager  https://markdownmonster.west-wind.com -o /temp/captured/MarkdownMonster.html -v 
+```
+
+which creates a single, very large but fully self-contained HTML file:
+
+![](images/HtmlPackagerRun.png)
+
+There are other options for creating:
+
+* A folder of loose HTML and resource files
+* A zip file of the folder of loose HTML and resources
+
+It's a very special use tool but I've found this to be very useful in a few scenarios where I needed to automate the process of capturing an HTML page.
+
+Because this tool is very general purpose, it's also published via Chocolatey as a standalone tool:
+
+```ps
+choco install htmlpackager
+```
+### Servers
+Because a .NET tool is basically just a .NET Core executable you can take advantage of just about any .NET Core feature - including the ability to create Web server applications and services that can run locally and be fully self contained. There are many use cases for this and here are two of them of how I've built and implemented as server.
+
+#### A Generic Web Server
+I frequently run local static Web sites on my machine where I need to access some client side development site or if I need to do some quick fixes to some HTML or client side content and just push it back up to a server.
+
+In order to do this efficiently I can spin up a full development environment or I can just quickly run a local development server and run the application. The `LiveReloadServer` tool I created is just that - a quick and dirty .NET Core based static Web Server that can serve local content that includes:
+
+* Local Static Web Content
+* Loose Razor Pages (optionally)
+* Markdown Pages
+
+In addition it also provides what for me is the most useful feature:
+
+* Live Reload Functionality (optionally)
+
+The live reload functionality is built-in and enabled by default and automatically refreshes any active HTML pages loaded through the server when an HTML page or any other related resources like CSS, JS etc. plus any extensions you've added are changed. 
+
+The server is quick and easy to install and run.
+
+This is not a new idea obviously. There have been NodeJs based servers like [http-server](https://github.com/http-party/http-server#readme) or [browser-sync](https://www.browsersync.io/) forever, but these tools require NodeJs and - for browser-sync at least - it doesn't work as quickly or nicely as I would like. LiveReloadServer is an alternative and it's .NET Core based.
 
 
+To use Live Reload Server:
 
+```ps
+dotnet tool install -g LiveReloadServer
+```
 
+To run it you simply point it at a `--WebRoot` folder on your local machine and that site then becomes a Web Site
 
+![](images/LiveReloadServerRunning.png)
+
+Live Reload is enabled by default so you can edit static text files and if you have Razor Pages and/or Markdown Page processing enabled you can also edit Razor and Markdown pages and see those pages refreshed.
+
+This is very useful dotnet tool and I use it almost daily. It's also useful to have easy access to when you need to quickly launch a local Web server to check out a folder of files.
+
+The server can run both in local publishing mode but can also be accessed externally.
+
+#### A Legacy Web and Application Server 
+The final example is for a legacy application server tool that is ancient and has recently been updated to .NET Core. I've been involved with - wait for it - a FoxPro legacy product that I maintain and still have a hundreds of users on - for over nearly 25 years now. This is ultra legacy, but because the technology I created many years ago that extended FoxPro functionality to build Web applications there are still a large number of existing applications and even to date new applications that use huge FoxPro code bases to hook up to the Web.
+
+The tool is called Web Connection and it has for many years used .NET to provide the interface between a Web Server (IIS in the past) to FoxPro.
+
+When .NET Core came out it offered a number of new opportunities to extend the middleware tooling by:
+
+* Providing a fully self-contained development server
+* Providing a nearly zero configuration environment
+* Ability to run the server component on non-Windows machines
+* Ability to run a local machine or network server without requiring IIS
+
+Long story short - a Dotnet Tool turned out to be great delivery mechanism for someone who for example, needs to run an old application that was built with Web Connection, but doesn't have access or can't install IIS on a machine and most of all doesn't want to set up and configure IIS
+
+This sounds weird, but this is actually a very common scenario for me: A user calls and says they have a Web Connection application that was developed 15 years ago, the developer left and they need to run the application and perhaps make a few changes. Setting up an environment in the past was not the easiest thing in the world. With this new component I can whittle that down to:
+
+* Install the .NET Core SDK
+* Install  `dotnet tool install -g WebConnection`
+* Point at a Web Connection folder and go
+
+![](images/WebConnectionServer.png)
+
+Again, a very specific use case, but a Dotnet Tool here offers a smooth solution to distribute a server that can then be used to serve an ancient legacy application without complex configuration or special installations required.
+
+To be clear though - this is not the only distribution mechanism for this server. A more recent installation of this tool will install a local .NET Core server with each application that travels with the application. This is not a .NET Tool but is essentially **the very same server implementation**  but just packaged as a .NET Core shared runtime application. Besides being local to the project it also offers the ability to host the server in IIS or on a Linux box.
+
+Legacy technology is always an eye roller, and I doubt any of you will use this technology :smile:, but it makes for an interesting use case of the Dotnet Tool functionality.
+
+## Summary
+Dotnet Tools provide a great way to share executable code from .NET Core in an easy and  platform independent way. If you've built a NuGet package and published it before you already know how to build and share a Dotnet Tool.
+
+They are easy to consume which gives access to a variety existing tools and because they are so easy to share promote a community of tools to be created. 
+
+Hopefully this session gives you some ideas of tools that you might want to use, or better yet - create and share with the communicate or even just within your organization.
+
+Rock on!
 
 ## Resources
 * [Nate McMaster's Tool List](https://github.com/natemcmaster/dotnet-tools)
