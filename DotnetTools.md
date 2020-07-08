@@ -295,7 +295,7 @@ dotnet tool install -g dotnet-htmlpackager
 
 Once installed you can run using the `help` command to see command line options:
 
-![](dotnet-htmlpackagerHelp.png)
+![](images/HtmlPackagerHelp.png)
 
 
 Then to run it you can do something like this:
