@@ -191,7 +191,8 @@ dotnet tool update -g LiveReloadServer
 To then run the installed Dotnet Tool you use the `toolname` that is defined for that server:
 
 ```ps
-LiveReloadServer --webroot /webconnectionprojects/vue/web
+LiveReloadServer --webroot /webconnectionprojects/vue/web `
+                 --UseRazor --UseMarkdown
 ```
 
 Here's what this looks like:

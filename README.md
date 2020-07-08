@@ -1,5 +1,9 @@
 # Using .NETCore Tools to Create Reusable and Shareable Tools & Apps
 
+*by Rick Strahl*
+
+
+
 This is a repository for session materials for this Dotnet Tools presentation.
 
 ### Presentation Materials
@@ -30,3 +34,8 @@ This is a repository for session materials for this Dotnet Tools presentation.
 * [Html Packager](https://www.nuget.org/packages/Westwind.HtmlPackager) 
 * [Visual Studio Snippet Converter](https://www.nuget.org/packages/dotnet-snippetconverter/)
 
+
+### Contact Rick
+*[@rickstrahl on Twitter](https://twitter.com/rickstrahl)*  
+*[rickstrahl on GitHub](https://github.com/rickstrahl)*  
+*rstrahl@west-wind.com*

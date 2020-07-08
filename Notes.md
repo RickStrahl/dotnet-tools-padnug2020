@@ -1,9 +1,9 @@
-### Local Install
+### Html Packager
+
 ```ps
 dotnet tool update -g dotnet-htmlpackager --add-source ./nupkg
 ```
 
-### Capture Html Page
 ```ps
 htmlpackager  https://hanselman.com -o /temp/captured/captured.html -d -v
 ```
